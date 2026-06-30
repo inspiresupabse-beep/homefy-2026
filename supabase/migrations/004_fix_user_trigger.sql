@@ -1,0 +1,6 @@
+-- DEPRECATED: Do not run this file as one script.
+-- PostgreSQL error 55P04: new enum values must be committed before use.
+--
+-- Run these two files separately in Supabase SQL Editor:
+--   1. 004_step1_enum.sql
+--   2. 004_step2_functions.sql

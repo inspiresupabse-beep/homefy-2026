@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Homefy CRM
+
+A web-based CRM for **Homefy** furniture business — built with Next.js and Supabase.
+
+## Features
+
+- **Role-based auth** — Admin and Sales Agent login
+- **Leads Kanban** — Drag-and-drop board (New → Qualified → Pending → Converted) with agent assignment
+- **Order management** — Product line items, discount, advance payment, auto-calculated balance
+- **Logistics** — Transport cost split (Company vs Customer share), vehicle number tracking
+- **WhatsApp reminders** — Auto-scheduled 10-day and 5-day delivery reminders
+- **Dashboard** — Total sales, leads per agent, pending payments, sales trend
+
+## Tech Stack
+
+- [Next.js 16](https://nextjs.org) (App Router)
+- [Supabase](https://supabase.com) (Auth, Postgres, Edge Functions, pg_cron)
+- [Tailwind CSS 4](https://tailwindcss.com)
+- [@dnd-kit](https://dndkit.com) for Kanban drag-and-drop
+- [Recharts](https://recharts.org) for dashboard charts
 
 ## Getting Started
 
-First, run the development server:
+### 1. Clone & install
+
+```bash
+npm install
+```
+
+### 2. Set up Supabase
+
+1. Create a project at [supabase.com](https://supabase.com)
+2. Copy `.env.local.example` to `.env.local` and fill in your keys:
+
+```bash
+cp .env.local.example .env.local
+```
+
+3. Run the database migration in the Supabase SQL Editor:
+
+```
+supabase/migrations/001_initial_schema.sql
+```
+
+4. (Optional) Enable pg_cron and run `002_cron_reminders.sql` for automated reminders
+
+### 3. Create users
+
+Create users in Supabase Auth dashboard. Set role in user metadata when signing up:
+
+```json
+{ "full_name": "Admin User", "role": "admin" }
+```
+
+Or update role directly in the `profiles` table after signup.
+
+**Roles:** `admin` | `sales_agent`
+
+### 4. Run locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 5. Deploy Edge Function (WhatsApp reminders)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+supabase functions deploy send-delivery-reminders
+```
 
-## Learn More
+Configure Twilio env vars in Supabase for live WhatsApp delivery:
 
-To learn more about Next.js, take a look at the following resources:
+- `TWILIO_ACCOUNT_SID`
+- `TWILIO_AUTH_TOKEN`
+- `TWILIO_WHATSAPP_FROM`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Without Twilio, reminders are logged to the function console in dev mode.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+src/
+├── app/
+│   ├── (dashboard)/     # Protected CRM pages
+│   │   ├── page.tsx     # Dashboard
+│   │   ├── leads/       # Kanban board
+│   │   └── orders/      # Order list & detail
+│   └── login/           # Auth page
+├── components/
+│   ├── dashboard/
+│   ├── leads/
+│   ├── orders/
+│   └── ui/
+└── lib/
+    ├── supabase/        # Client, server, middleware
+    └── types/           # TypeScript types
+supabase/
+├── migrations/          # Database schema
+└── functions/           # Edge functions
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Database Schema
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Table | Purpose |
+|-------|---------|
+| `profiles` | User roles (admin / sales_agent) |
+| `leads` | Customer leads with Kanban status |
+| `orders` | Orders with products, discount, payments |
+| `logistics` | Transport cost split & vehicle tracking |
+| `delivery_reminders` | Scheduled WhatsApp reminders |
+
+## License
+
+Private — Homefy internal use.
