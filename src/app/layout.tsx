@@ -10,12 +10,23 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "Homefy CRM",
   description: "Homefy furniture business CRM for leads, orders & logistics",
+  applicationName: "Homefy CRM",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Homefy",
+  },
+  icons: {
+    icon: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
+    apple: [{ url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" }],
+  },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  themeColor: "#b45309",
 };
 
 export default function RootLayout({

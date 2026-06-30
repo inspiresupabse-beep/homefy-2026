@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Wifi } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { AddToHomeScreen } from "@/components/layout/add-to-home-screen";
+import { HomefyLogo } from "@/components/layout/homefy-logo";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -41,9 +42,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-700">
-              <Wifi className="h-6 w-6 text-white" />
-            </div>
+            <HomefyLogo size="lg" className="rounded-xl" />
             <div>
               <h1 className="text-xl font-bold text-stone-900">Homefy CRM</h1>
               <p className="text-sm text-stone-500">Sign in to manage leads & orders</p>
@@ -81,6 +80,9 @@ export default function LoginPage() {
               {loading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
+          <div className="mt-4 border-t border-stone-100 pt-4">
+            <AddToHomeScreen />
+          </div>
         </CardContent>
       </Card>
     </div>
